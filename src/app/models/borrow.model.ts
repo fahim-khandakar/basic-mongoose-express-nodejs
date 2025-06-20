@@ -1,11 +1,11 @@
-import { model, Schema } from "mongoose";
+import mongoose, { model, Schema, Types } from "mongoose";
 import { BorrowStaticMethods, IBorrow } from "../interfaces/borrow.interface";
 import { IBooks } from "../interfaces/books.interface";
 import { Book } from "./books.model";
 
 const borrowSchema = new Schema<IBorrow, BorrowStaticMethods>(
   {
-    book: { type: String, required: true, trim: true },
+    book: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Book" },
     quantity: { type: Number, required: true, min: 1 },
     dueDate: { type: Date, required: true },
   },
