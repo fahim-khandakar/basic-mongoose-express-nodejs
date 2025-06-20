@@ -1,7 +1,6 @@
 import { model, Schema } from "mongoose";
 import { IBooks } from "../interfaces/books.interface";
 
-// "    Hello World    "
 const bookSchema = new Schema<IBooks>(
   {
     title: { type: String, required: true, trim: true },
