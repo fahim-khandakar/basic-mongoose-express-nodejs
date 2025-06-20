@@ -61,6 +61,22 @@ booksRoutes.patch("/:bookId", async (req: Request, res: Response) => {
   const bookId = req.params.bookId;
   const updatedBody = req.body;
 
+  const existingBook = await Book.findById(bookId);
+  if (!existingBook) {
+    res.status(404).json({
+      success: false,
+      message: "Book not found",
+    });
+    return;
+  }
+
+  if (
+    (existingBook.available === false && existingBook.copies === 0) ||
+    updatedBody.available === true
+  ) {
+    updatedBody.available = true;
+  }
+
   const data = await Book.findByIdAndUpdate(bookId, updatedBody, {
     new: true,
   });
