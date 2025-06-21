@@ -7,7 +7,10 @@ export const CreateBorrowZodSchema = z.object({
       required_error: "Quantity is required",
     })
     .min(1, { message: "Quantity must be at least 1" }),
-  dueDate: z.date({
-    required_error: "Due date is required",
-  }),
+  dueDate: z
+    .string({ required_error: "Due date is required" })
+    .transform((val) => new Date(val))
+    .refine((date) => !isNaN(date.getTime()), {
+      message: "Invalid date format",
+    }),
 });

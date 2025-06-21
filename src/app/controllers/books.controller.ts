@@ -86,7 +86,16 @@ booksRoutes.patch("/:bookId", async (req: Request, res: Response) => {
     return;
   }
 
-  const data = await Book.findByIdAndUpdate(bookId, updatedBody.data, {
+  if (
+    (existingBook.available === false &&
+      existingBook.copies === 0 &&
+      updatedBody.copies > 0) ||
+    updatedBody.available === true
+  ) {
+    updatedBody.available = true;
+  }
+
+  const data = await Book.findByIdAndUpdate(bookId, updatedBody, {
     new: true,
   });
 

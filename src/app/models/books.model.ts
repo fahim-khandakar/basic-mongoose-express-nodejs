@@ -34,6 +34,7 @@ bookSchema.pre("save", function (next) {
 });
 
 bookSchema.post("save", function (doc, next) {
+  console.log(`[LOG] Book created: ${doc.title} (ID: ${doc._id})`);
   next();
 });
 

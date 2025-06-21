@@ -16,7 +16,6 @@ export const CreateUserZodSchema = z.object({
 });
 
 export const UpdateUserZodSchema = z.object({
-  bookId: z.string(),
   title: z.string().optional(),
   author: z.string().optional(),
   genre: z

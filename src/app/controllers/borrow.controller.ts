@@ -36,6 +36,7 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
       success: false,
       message: "No copies available for borrowing",
     });
+
     return;
   } else if (availableCopies < quantity) {
     res.status(400).json({
@@ -44,9 +45,17 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
     });
     return;
   }
-  await Book.findByIdAndUpdate(book, {
-    copies: availableCopies - quantity,
-  });
+  const updatedBook = await Book.findByIdAndUpdate(
+    book,
+    {
+      copies: availableCopies - quantity,
+    },
+    { new: true }
+  );
+
+  if (updatedBook?.copies === 0) {
+    await Borrow.updateAvailableStatus(book);
+  }
 
   const data = await Borrow.create(req.body);
 
