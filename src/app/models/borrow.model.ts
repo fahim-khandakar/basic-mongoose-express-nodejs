@@ -14,13 +14,28 @@ const borrowSchema = new Schema<IBorrow, BorrowStaticMethods>(
   }
 );
 
-borrowSchema.static("updateAvailableStatus", async function (bookId: string) {
-  const updated = await Book.findByIdAndUpdate(
-    bookId,
-    { available: false },
-    { new: true }
-  );
-  return updated;
+borrowSchema.static(
+  "updateAvailableStatus",
+  async function (bookId: string | Types.ObjectId) {
+    const updated = await Book.findByIdAndUpdate(
+      bookId,
+      { available: false },
+      { new: true }
+    );
+    return updated;
+  }
+);
+
+borrowSchema.post("save", async function (doc, next) {
+  try {
+    const updatedBook = await Book.findById(doc.book).lean();
+    if ((updatedBook?.copies ?? 0) === 0) {
+      await Borrow.updateAvailableStatus(doc.book);
+    }
+    next();
+  } catch (error) {
+    next(error as mongoose.CallbackError);
+  }
 });
 
 export const Borrow = model<IBorrow, BorrowStaticMethods>(
