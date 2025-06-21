@@ -20,7 +20,7 @@ const CreateBorrowZodSchema = z.object({
 borrowRoutes.post("/", async (req: Request, res: Response) => {
   const { quantity, book } = req.body;
 
-  CreateBorrowZodSchema.safeParse(req.body);
+  CreateBorrowZodSchema.parse(req.body);
 
   if (!book || typeof quantity !== "number") {
     res.status(400).json({

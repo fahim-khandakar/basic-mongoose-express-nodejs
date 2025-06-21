@@ -46,7 +46,7 @@ const UpdateUserZodSchema = z.object({
 booksRoutes.post("/", async (req: Request, res: Response) => {
   const body = req.body;
 
-  CreateUserZodSchema.safeParse(body);
+  CreateUserZodSchema.parse(body);
 
   const data = await Book.create(body);
 
@@ -104,7 +104,7 @@ booksRoutes.patch("/:bookId", async (req: Request, res: Response) => {
   const bookId = req.params.bookId;
   const updatedBody = req.body;
 
-  UpdateUserZodSchema.safeParse(updatedBody);
+  UpdateUserZodSchema.parse(updatedBody);
 
   const existingBook = await Book.findById(bookId);
   if (!existingBook) {
