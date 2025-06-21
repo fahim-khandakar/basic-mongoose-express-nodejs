@@ -8,6 +8,7 @@ import {
 
 export const booksRoutes = express.Router();
 
+// Book create api
 booksRoutes.post("/", async (req: Request, res: Response) => {
   const body = req.body;
 
@@ -22,6 +23,7 @@ booksRoutes.post("/", async (req: Request, res: Response) => {
   });
 });
 
+// Get all books api
 booksRoutes.get("/", async (req: Request, res: Response) => {
   const { filter, sort, limit, sortBy } = req.query;
   console.log("Query Parameters:", { filter, sort, limit, sortBy });
@@ -42,6 +44,7 @@ booksRoutes.get("/", async (req: Request, res: Response) => {
   });
 });
 
+// Get single book api
 booksRoutes.get("/:bookId", async (req: Request, res: Response) => {
   const bookId = req.params.bookId;
 
@@ -54,6 +57,7 @@ booksRoutes.get("/:bookId", async (req: Request, res: Response) => {
   });
 });
 
+// Delete book api
 booksRoutes.delete("/:bookId", async (req: Request, res: Response) => {
   const bookId = req.params.bookId;
 
@@ -65,6 +69,8 @@ booksRoutes.delete("/:bookId", async (req: Request, res: Response) => {
     data: null,
   });
 });
+
+// Update book api
 booksRoutes.patch("/:bookId", async (req: Request, res: Response) => {
   const bookId = req.params.bookId;
   const updatedBody = req.body;

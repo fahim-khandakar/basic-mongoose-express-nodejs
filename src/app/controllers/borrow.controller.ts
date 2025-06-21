@@ -1,11 +1,11 @@
 import express, { Request, Response } from "express";
 import { Borrow } from "../models/borrow.model";
 import { Book } from "../models/books.model";
-import { z } from "zod";
 import { CreateBorrowZodSchema } from "../Schema/borrow.schema";
 
 export const borrowRoutes = express.Router();
 
+// Create a new borrow entry
 borrowRoutes.post("/", async (req: Request, res: Response) => {
   const { quantity, book } = req.body;
 
@@ -57,6 +57,7 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
   });
 });
 
+// Get all borrowed books summary
 borrowRoutes.get("/", async (req: Request, res: Response) => {
   const data = await Borrow.aggregate([
     {
