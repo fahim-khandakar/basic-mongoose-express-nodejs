@@ -26,6 +26,41 @@ borrowSchema.static(
   }
 );
 
+borrowSchema.pre("save", async function (next) {
+  const singleBook = await Book.findById(this.book).lean();
+  if (!singleBook) {
+    next(new Error("Book not found"));
+    return;
+  }
+
+  const availableCopies = singleBook.copies || 0;
+
+  if (availableCopies === 0) {
+    await Borrow.updateAvailableStatus(this.book);
+    next(new Error("No copies available for this book"));
+
+    return;
+  } else if (availableCopies < this.quantity) {
+    next(new Error("No copies available for this book"));
+
+    return;
+  }
+
+  const updatedBook = await Book.findByIdAndUpdate(
+    this.book,
+    {
+      copies: availableCopies - this.quantity,
+    },
+    { new: true }
+  );
+
+  if (updatedBook?.copies === 0) {
+    await Borrow.updateAvailableStatus(this.book);
+  }
+
+  next();
+});
+
 borrowSchema.post("save", async function (doc, next) {
   try {
     const updatedBook = await Book.findById(doc.book).lean();

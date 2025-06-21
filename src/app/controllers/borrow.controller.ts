@@ -19,44 +19,6 @@ borrowRoutes.post("/", async (req: Request, res: Response) => {
     return;
   }
 
-  const singleBook = await Book.findById(book).lean();
-  if (!singleBook) {
-    res.status(404).json({
-      success: false,
-      message: "Book not found",
-    });
-    return;
-  }
-
-  const availableCopies = singleBook.copies || 0;
-
-  if (availableCopies === 0) {
-    await Borrow.updateAvailableStatus(book);
-    res.status(400).json({
-      success: false,
-      message: "No copies available for borrowing",
-    });
-
-    return;
-  } else if (availableCopies < quantity) {
-    res.status(400).json({
-      success: false,
-      message: "Not enough copies available",
-    });
-    return;
-  }
-  const updatedBook = await Book.findByIdAndUpdate(
-    book,
-    {
-      copies: availableCopies - quantity,
-    },
-    { new: true }
-  );
-
-  if (updatedBook?.copies === 0) {
-    await Borrow.updateAvailableStatus(book);
-  }
-
   const data = await Borrow.create(req.body);
 
   res.status(200).json({

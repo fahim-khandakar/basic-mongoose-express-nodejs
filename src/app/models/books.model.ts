@@ -29,13 +29,4 @@ const bookSchema = new Schema<IBooks>(
   }
 );
 
-bookSchema.pre("save", function (next) {
-  next();
-});
-
-bookSchema.post("save", function (doc, next) {
-  console.log(`[LOG] Book created: ${doc.title} (ID: ${doc._id})`);
-  next();
-});
-
 export const Book = model<IBooks>("Book", bookSchema);
