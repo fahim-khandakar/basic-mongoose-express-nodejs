@@ -7,19 +7,11 @@ export const borrowRoutes = express.Router();
 
 // Create a new borrow entry
 borrowRoutes.post("/", async (req: Request, res: Response) => {
-  const { quantity, book } = req.body;
+  const body = req.body;
 
-  CreateBorrowZodSchema.parse(req.body);
+  CreateBorrowZodSchema.parse(body);
 
-  if (!book || typeof quantity !== "number") {
-    res.status(400).json({
-      success: false,
-      message: "Invalid input: 'book' and 'quantity' are required.",
-    });
-    return;
-  }
-
-  const data = await Borrow.create(req.body);
+  const data = await Borrow.create(body);
 
   res.status(200).json({
     success: true,

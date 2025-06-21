@@ -26,7 +26,6 @@ booksRoutes.post("/", async (req: Request, res: Response) => {
 // Get all books api
 booksRoutes.get("/", async (req: Request, res: Response) => {
   const { filter, sort, limit, sortBy } = req.query;
-  console.log("Query Parameters:", { filter, sort, limit, sortBy });
 
   const filterQuery: Record<string, any> = {};
   if (filter) {

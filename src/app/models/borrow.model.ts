@@ -28,6 +28,7 @@ borrowSchema.static(
 
 borrowSchema.pre("save", async function (next) {
   const singleBook = await Book.findById(this.book).lean();
+
   if (!singleBook) {
     next(new Error("Book not found"));
     return;
@@ -41,7 +42,8 @@ borrowSchema.pre("save", async function (next) {
 
     return;
   } else if (availableCopies < this.quantity) {
-    next(new Error("No copies available for this book"));
+    console.log("hello");
+    next(new Error("Not enough copies available for this book"));
 
     return;
   }
