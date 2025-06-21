@@ -2,20 +2,9 @@ import express, { Request, Response } from "express";
 import { Borrow } from "../models/borrow.model";
 import { Book } from "../models/books.model";
 import { z } from "zod";
+import { CreateBorrowZodSchema } from "../Schema/borrow.schema";
 
 export const borrowRoutes = express.Router();
-
-const CreateBorrowZodSchema = z.object({
-  book: z.string({ required_error: "Book ID is required" }),
-  quantity: z
-    .number({
-      required_error: "Quantity is required",
-    })
-    .min(1, { message: "Quantity must be at least 1" }),
-  dueDate: z.date({
-    required_error: "Due date is required",
-  }),
-});
 
 borrowRoutes.post("/", async (req: Request, res: Response) => {
   const { quantity, book } = req.body;
