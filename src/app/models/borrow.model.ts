@@ -42,7 +42,6 @@ borrowSchema.pre("save", async function (next) {
 
     return;
   } else if (availableCopies < this.quantity) {
-    console.log("hello");
     next(new Error("Not enough copies available for this book"));
 
     return;
