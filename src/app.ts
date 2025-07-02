@@ -3,14 +3,16 @@ import { booksRoutes } from "./app/controllers/books.controller";
 import { borrowRoutes } from "./app/controllers/borrow.controller";
 import { globalErrorHandler } from "./app/config/globalErrorHandler";
 import cors from "cors";
-import { ApiError } from "./app/config/ApiError";
 import { notFound } from "./app/middlewares/noteFound";
 
 const app: Application = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173"],
+    origin: [
+      // "http://localhost:5173",
+      "https://prismatic-kataifi-d83a34.netlify.app/",
+    ],
   })
 );
 

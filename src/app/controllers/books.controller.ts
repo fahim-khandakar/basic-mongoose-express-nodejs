@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import { Book } from "../models/books.model";
+import { Borrow } from "../models/borrow.model";
 import { z } from "zod";
 import {
   CreateUserZodSchema,
@@ -45,17 +46,45 @@ booksRoutes.get("/", async (req: Request, res: Response) => {
 });
 
 // Get single book api
-booksRoutes.get("/:bookId", async (req: Request, res: Response) => {
-  const bookId = req.params.bookId;
+booksRoutes.get(
+  "/:bookId",
+  async (req: Request, res: Response): Promise<void> => {
+    const bookId = req.params.bookId;
 
-  const data = await Book.findById(bookId);
+    try {
+      const book = await Book.findById(bookId).lean();
 
-  res.status(200).json({
-    success: true,
-    message: "Book retrieved successfully",
-    data,
-  });
-});
+      if (!book) {
+        res.status(404).json({
+          success: false,
+          message: "Book not found",
+        });
+        return;
+      }
+
+      const borrows = await Borrow.find({ book: bookId }).lean();
+
+      const response = {
+        ...book,
+        totalTimesBorrowed: borrows.length,
+        totalBorrowedQuantity: borrows.reduce((acc, b) => acc + b.quantity, 0),
+        remainingCopies: book.copies,
+        borrowHistory: borrows,
+      };
+
+      res.status(200).json({
+        success: true,
+        message: "Book details retrieved successfully",
+        data: response,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: "Something went wrong",
+      });
+    }
+  }
+);
 
 // Delete book api
 booksRoutes.delete("/:bookId", async (req: Request, res: Response) => {
