@@ -1,12 +1,14 @@
+// middlewares/globalErrorHandler.ts
 import { ZodError } from "zod";
 import { ErrorRequestHandler } from "express";
+import { ApiError } from "./ApiError";
 
-export const globalErrorHandler: ErrorRequestHandler = (
-  err,
-  req,
-  res,
-  next
-) => {
+export const globalErrorHandler = (
+  err: any,
+  req: any,
+  res: any,
+  next: any
+): void => {
   if (err instanceof ZodError) {
     const formattedErrors: Record<string, any> = {};
 
@@ -30,7 +32,7 @@ export const globalErrorHandler: ErrorRequestHandler = (
       };
     });
 
-    res.status(400).json({
+    return res.status(400).json({
       message: "Validation failed",
       success: false,
       error: {
@@ -38,14 +40,35 @@ export const globalErrorHandler: ErrorRequestHandler = (
         errors: formattedErrors,
       },
     });
-    return;
   }
 
-  // fallback
-  res.status(500).json({
+  if (err instanceof ApiError) {
+    return res.status(err.statusCode).json({
+      success: false,
+      message: err.message,
+      error: {
+        name: err.name,
+        stack: err.stack,
+      },
+    });
+  }
+
+  if (err.status === 404 || err.message === "Not Found") {
+    return res.status(404).json({
+      success: false,
+      message: "API not found",
+      error: {
+        name: "NotFoundError",
+      },
+    });
+  }
+
+  return res.status(500).json({
     message: err.message || "Something went wrong",
     success: false,
-    error: err,
+    error: {
+      name: err.name || "InternalServerError",
+      stack: process.env.NODE_ENV === "development" ? err.stack : undefined,
+    },
   });
-  return;
 };

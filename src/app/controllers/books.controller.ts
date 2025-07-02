@@ -13,6 +13,7 @@ booksRoutes.post("/", async (req: Request, res: Response) => {
   const body = req.body;
 
   CreateUserZodSchema.parse(body);
+  console.log("body", body);
 
   const data = await Book.create(body);
 
