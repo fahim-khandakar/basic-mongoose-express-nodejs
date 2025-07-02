@@ -21,11 +21,11 @@ app.use(express.json());
 app.use("/api/books", booksRoutes);
 app.use("/api/borrow", borrowRoutes);
 
-app.use(notFound);
-app.use(globalErrorHandler);
-
 app.get("/", (req: Request, res: Response) => {
   res.send("Welcome to Book Store App");
 });
+
+app.use(notFound);
+app.use(globalErrorHandler);
 
 export default app;
